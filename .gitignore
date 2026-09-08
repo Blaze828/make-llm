@@ -2,12 +2,19 @@
 __pycache__/
 *.py[cod]
 
-# 생성물 (코드로 언제든 다시 만들 수 있는 것)
-char_vocab.json
+# 데이터 (원본·정제 결과는 용량이 크고 코드로 재생성 가능)
+datasets/raw/
+datasets/processed/
 *.bin
-checkpoints/
-data/raw/
-data/processed/
+*.bz2
+
+# 학습 결과 (README는 남기고 가중치만 제외)
+checkpoints/*
+!checkpoints/README.md
+
+# 토크나이저 생성물
+char_vocab.json
+*_vocab.json
 
 # 에디터 / OS
 .vscode/

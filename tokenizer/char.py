@@ -87,5 +87,5 @@ if __name__ == "__main__":
         text = Path(sys.argv[1]).read_text(encoding="utf-8")
     else:
         text = SAMPLE
-        print("(내장 샘플 사용 - 내 파일로 하려면: python tokenizer.py 파일경로)\n")
+        print("(내장 샘플 사용 - 내 파일로 하려면: python tokenizer/char.py 파일경로)\n")
     selftest(text)
