@@ -1,0 +1,16 @@
+# 파이썬
+__pycache__/
+*.py[cod]
+
+# 생성물 (코드로 언제든 다시 만들 수 있는 것)
+char_vocab.json
+*.bin
+checkpoints/
+data/raw/
+data/processed/
+
+# 에디터 / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
