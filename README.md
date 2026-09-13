@@ -63,6 +63,8 @@ Building an LLM
 
 읽은 논문의 핵심 질문, 구조와 수치, 학습 방법, 관련 용어는 [논문 정리](docs/papers/README.md)에 정리한다.
 
+프로젝트에서 실제로 채택할 첫 번째 Dense Decoder-only Transformer의 구조, 학습 기본값, 확장 순서는 [첫 번째 한국어 LLM 설계](docs/model-design.md)에 정리한다.
+
 
 논문을 볼 때는 아래만 정리해도 충분
 
