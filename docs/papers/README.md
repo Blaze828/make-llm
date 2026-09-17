@@ -12,6 +12,9 @@
 | [QLoRA](#4-qlora) | LoRA의 GPU 메모리도 더 줄일 수 있을까? | 4-bit base model 위의 LoRA 학습 |
 | [OLMo](#5-olmo) | LLM을 처음부터 실제로 어떻게 만들고 학습할까? | 공개된 end-to-end 학습 레시피 |
 | [OLMo 2](#6-olmo-2) | 더 안정적이고 효율적으로 학습하려면? | 안정화, 고품질 mid-training, post-training |
+| [HyperCLOVA](#7-hyperclova) | 한국어에 맞는 대규모 생성형 LLM은 어떻게 만들까? | 한국어 데이터와 Morpheme-aware Byte-level BPE |
+| [Polyglot-Ko](#8-polyglot-ko) | 공개 한국어 LLM의 데이터·구조·평가는 어떻게 구성할까? | GPT-NeoX, 한국어 전처리, RoPE, 형태소 인지 BPE |
+| [DoRA](#9-dora) | LoRA를 더 표현력 있게 만들 수 있을까? | Weight의 magnitude와 direction을 분리해 학습 |
 
 ## 1. Attention Is All You Need — Transformer
 
@@ -125,11 +128,143 @@
 
 **한 문장 요약:** 모델 크기뿐 아니라 학습 안정성, 고품질 mid-training, post-training이 최종 성능에 매우 중요하다는 것을 보여준다.
 
-## 7. 논문의 관계
+## 7. HyperCLOVA
+
+원문: [What Changes Can Large-scale Language Models Bring? Intensive Study on HyperCLOVA: Billions-scale Korean Generative Pretrained Transformers](https://aclanthology.org/2021.emnlp-main.274.pdf)
+
+| 항목 | 내용 |
+| --- | --- |
+| 핵심 질문 | 한국어에 특화된 대규모 생성형 LLM을 어떻게 만들 수 있을까? |
+| 구조 | GPT-3 계열의 autoregressive Decoder-only Transformer |
+| 학습 데이터 | 블로그, 뉴스, 카페, 댓글, Q&A 등 다양한 한국어 중심 데이터 |
+| Tokenizer | Morpheme-aware Byte-level BPE |
+| Tokenizer 핵심 발견 | 일반 Byte-level BPE 및 Character BPE보다 한국어 task에서 더 높은 성능을 보임 |
+| 성능 경향 | 모델 크기가 커질수록 few-shot 성능이 전반적으로 향상 |
+
+### 프로젝트에서 참고할 점
+
+한국어 LLM의 성능은 모델 크기 하나로 결정되지 않는다.
+
+```text
+한국어 데이터 품질
+  + 데이터 다양성
+  + 한국어에 적합한 Tokenizer
+  + 모델 크기
+```
+
+이 프로젝트에서는 HyperCLOVA를 **한국어 데이터 구성과 tokenizer 설계의 참고 모델**로 사용한다. 특히 단순 BPE부터 구현한 다음, 한국어 형태소 특성을 반영한 Morpheme-aware Byte-level BPE를 비교 실험 후보로 둔다.
+
+**한 문장 요약:** 한국어 중심의 다양한 데이터와 한국어에 맞춘 tokenizer가 대규모 한국어 LLM의 핵심 요소임을 보여준다.
+
+## 8. Polyglot-Ko
+
+원문: [A Technical Report for Polyglot-Ko: Open-Source Large-Scale Korean Language Models](https://arxiv.org/pdf/2306.02254)
+
+| 항목 | 내용 |
+| --- | --- |
+| 핵심 질문 | 공개 한국어 LLM의 데이터, 구조, 평가는 어떻게 구성할까? |
+| 기반 구조 | EleutherAI GPT-NeoX 기반 Decoder-only Transformer |
+| 모델 크기 | 1.3B / 3.8B / 5.8B / 12.8B |
+| Raw data | 약 1.2TB의 한국어 중심 원천 데이터 수집 |
+| 데이터 종류 | 블로그, 뉴스, Q&A, 특허, 소설, 댓글 등 |
+| 전처리 | 중복 제거, 개인정보 제거, HTML 정리 |
+| Tokenizer | MeCab + Morpheme-aware Byte-level BPE |
+| 위치 정보 | RoPE (Rotary Positional Embedding) |
+| 평가 | KOBEST로 zero-shot / few-shot 평가 |
+
+### 프로젝트에서 참고할 점
+
+한국어 Base LLM의 데이터 흐름은 다음과 같이 설계한다.
+
+```text
+한국어 Raw Data
+        ↓
+Cleaning / Deduplication / PII 제거
+        ↓
+Tokenizer
+        ↓
+Token Embedding
+        ↓
+Decoder Transformer × N
+ ├─ Causal Self-Attention
+ ├─ RoPE
+ └─ MLP
+        ↓
+Linear Layer
+        ↓
+Next Token Prediction
+```
+
+모델 평가는 loss만으로 끝내지 않는다.
+
+```text
+Training Loss
+  + Validation Loss
+  + 실제 Text Generation
+  + 한국어 Benchmark
+```
+
+**한 문장 요약:** 한국어 LLM에서는 GPT-NeoX 계열 Decoder-only 구조뿐 아니라 데이터 정제, 형태소 인지 tokenizer, 한국어 benchmark 평가가 함께 필요하다.
+
+## 9. DoRA
+
+원문: [DoRA: Weight-Decomposed Low-Rank Adaptation](https://arxiv.org/pdf/2402.09353)
+
+| 항목 | 내용 |
+| --- | --- |
+| 핵심 질문 | 적은 parameter만 학습하면서 LoRA보다 full fine-tuning에 가까운 업데이트를 만들 수 있을까? |
+| 종류 | PEFT (Parameter-Efficient Fine-Tuning) |
+| 핵심 방법 | pre-trained weight를 magnitude와 direction으로 분리 |
+| Magnitude | 별도 parameter로 직접 학습 |
+| Direction | LoRA의 low-rank update로 학습 |
+| 결과 | 비슷한 학습 parameter 수에서 여러 LLM·멀티모달 실험의 LoRA보다 높은 성능 보고 |
+| 확장 | 4-bit quantization과 결합한 QDoRA 사용 가능 |
+
+LoRA는 기존 weight에 low-rank update를 더한다.
+
+```text
+W' = W₀ + BA
+
+W₀: 기존 pre-trained weight
+A, B: 학습하는 low-rank matrix
+```
+
+DoRA는 weight를 크기와 방향으로 나눈다.
+
+```text
+Weight
+ ├─ Magnitude (크기)  → 직접 학습
+ └─ Direction (방향)  → LoRA 방식으로 학습
+```
+
+개념적으로 DoRA의 업데이트는 다음처럼 표현할 수 있다.
+
+```text
+W' = m × (W₀ + BA) / ||W₀ + BA||
+
+m: 학습하는 magnitude
+W₀ + BA: LoRA로 갱신한 direction
+```
+
+### LoRA와 DoRA 비교
+
+| 방식 | 업데이트 방법 | 프로젝트에서의 역할 |
+| --- | --- | --- |
+| LoRA | low-rank update가 magnitude와 direction 변화를 함께 표현 | 가장 먼저 구현할 PEFT 기준선 |
+| DoRA | magnitude는 직접, direction은 low-rank update로 분리 | LoRA 기준선 뒤에 비교할 고성능 PEFT 후보 |
+| QLoRA | 4-bit base model + LoRA | GPU 메모리가 부족할 때의 LoRA 방식 |
+| QDoRA | 4-bit base model + DoRA | GPU 메모리가 부족할 때의 DoRA 실험 후보 |
+
+**한 문장 요약:** DoRA는 LoRA의 간결함을 유지하면서 weight의 크기와 방향을 분리해 더 표현력 있는 fine-tuning을 목표로 한다.
+
+## 10. 논문의 관계와 프로젝트 적용 방향
 
 ```text
 Transformer
   └─ LLM의 기본 구조를 만듦
+
+HyperCLOVA / Polyglot-Ko
+  └─ 한국어 데이터, 형태소 인지 tokenizer, Decoder-only 구조의 참고
 
 OLMo / OLMo 2
   └─ 실제 LLM을 처음부터 pretraining
@@ -142,11 +277,31 @@ LoRA
 
 QLoRA
   └─ base model까지 4-bit로 줄여 더 적은 GPU로 fine-tuning
+
+DoRA
+  └─ LoRA의 magnitude / direction 분리 방식으로 fine-tuning
 ```
 
-프로젝트 흐름으로 보면 `Transformer → Base LLM pretraining → 분야 적응 → parameter-efficient fine-tuning`의 순서다.
+프로젝트는 HyperCLOVA와 Polyglot-Ko를 참고해 한국어 Base LLM을 만들고, DoRA로 전체 모델을 다시 학습하지 않고 새 분야에 적응하는 것을 목표로 한다.
 
-## 8. 기본 모델 구조 용어
+```text
+한국어 데이터 수집 및 정제
+          ↓
+한국어 Tokenizer 구축
+          ↓
+Decoder-only Transformer 구현
+          ↓
+Next Token Prediction 기반 Pre-training
+          ↓
+한국어 Base LLM
+          ↓
+DoRA 기반 Fine-Tuning
+          ↓
+특정 Domain에 특화된 LLM
+```
+
+## 11. 기본 모델 구조 용어
+
 
 | 용어 | 의미 |
 | --- | --- |
@@ -161,7 +316,7 @@ QLoRA
 
 예를 들어 hidden size가 4,096이면 `사과`라는 token 하나가 내부에서 4,096개의 숫자로 표현된다는 뜻이다.
 
-## 9. Attention 관련 용어
+## 12. Attention 관련 용어
 
 | 용어 | 의미 |
 | --- | --- |
@@ -179,7 +334,7 @@ QLoRA
 Query + Key → 어떤 token이 중요한지 계산 → Value에서 정보 가져오기
 ```
 
-## 10. FFN, Activation, 위치 정보
+## 13. FFN, Activation, 위치 정보
 
 FFN(Feed Forward Network)은 attention 이후 각 token의 정보를 다시 가공하는 부분이다. Transformer Base에서는 보통 차원을 넓혔다가 다시 줄인다.
 
@@ -199,7 +354,7 @@ Transformer는 구조만으로 token 순서를 알 수 없다. 따라서 `나는
 | Positional Encoding | Token의 순서를 알려주는 정보 |
 | RoPE | Rotary Positional Embedding. 현대 LLM에서 많이 사용하는 위치 표현 |
 
-## 11. Normalization과 학습 안정화
+## 14. Normalization과 학습 안정화
 
 | 용어 | 의미 |
 | --- | --- |
@@ -212,7 +367,7 @@ Transformer는 구조만으로 token 순서를 알 수 없다. 따라서 `나는
 
 공통 목적은 **학습이 중간에 불안정해지거나 실패하지 않게 하는 것**이다.
 
-## 12. Tokenizer
+## 15. Tokenizer
 
 | 용어 | 의미 |
 | --- | --- |
@@ -223,7 +378,7 @@ Transformer는 구조만으로 token 순서를 알 수 없다. 따라서 `나는
 
 예를 들어 `unbelievable`은 tokenizer에 따라 `un` → `believ` → `able`처럼 나뉠 수 있다.
 
-## 13. 학습 단계
+## 16. 학습 단계
 
 | 단계 | 의미 |
 | --- | --- |
@@ -251,7 +406,7 @@ TAPT: 의학 모델 → 질병 분류 task 데이터 → 질병 분류에 더 �
 
 즉, **DAPT는 분야(domain)**, **TAPT는 작업(task)** 에 맞춘 추가 사전학습이다.
 
-## 14. LoRA와 Rank
+## 17. LoRA와 Rank
 
 LoRA의 기본 수식은 $W = W_0 + BA$다.
 
@@ -265,7 +420,7 @@ LoRA의 기본 수식은 $W = W_0 + BA$다.
 
 원래 12,288차원 공간의 변화량을 `12,288 → r=4 → 12,288`처럼 작은 차원을 통과시켜 표현할 수 있다. `r`이 작을수록 학습 parameter와 memory는 줄지만, rank를 계속 키운다고 성능이 계속 좋아지는 것은 아니다.
 
-## 15. Quantization과 Precision
+## 18. Quantization과 Precision
 
 Quantization은 weight를 더 적은 bit로 저장하는 방법이다.
 
@@ -285,7 +440,7 @@ bit 수가 줄수록 memory는 줄지만 정보 손실 가능성은 커진다.
 | Double Quantization | Quantization scale도 다시 quantize해 memory를 절약 |
 | Paged Optimizer | GPU memory 부족 시 일부 optimizer 상태를 CPU RAM으로 옮겨 OOM을 줄이는 방법 |
 
-## 16. Optimizer, Learning Rate, Warmup
+## 19. Optimizer, Learning Rate, Warmup
 
 Optimizer는 weight를 어떤 방식으로 업데이트할지 결정한다. 대표적으로 Adam과 AdamW가 있고 최근 LLM에는 AdamW가 많이 쓰인다.
 
