@@ -51,17 +51,34 @@ class MecabSurfaceSplitter:
 
 def main():
     parser = argparse.ArgumentParser(description="Learn Korean morphology-aware BPE from train-only UTF-8 text")
-    parser.add_argument("--text", required=True, help="UTF-8 text, one document per line")
+    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--text", help="UTF-8 text, one document per line")
+    inputs.add_argument("--corpus-manifest", help="Prepared corpus; vocabulary learns from train split only")
     parser.add_argument("--output", required=True)
     parser.add_argument("--config", default="configs/tokenizer/korean-morph-bpe-32k.json")
     parser.add_argument("--vocab-size", type=int)
     parser.add_argument("--plain", action="store_true", help="Explicit ordinary byte-BPE ablation")
     args = parser.parse_args()
+    from training.execution import require_training_enabled
+    require_training_enabled()
     config = json.loads(Path(args.config).read_text(encoding="utf-8"))
     splitter = None if args.plain else MecabSurfaceSplitter()
-    with Path(args.text).open(encoding="utf-8", newline="") as stream:
-        tok = BPETokenizer.train(stream, args.vocab_size or config["vocab_size"], splitter,
-                                 config["special_tokens"])
+    if args.corpus_manifest:
+        from data_pipeline.common import artifact_path, read_jsonl, sha256_file
+        manifest_path = Path(args.corpus_manifest)
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        info = manifest["splits"]["train"]
+        source = artifact_path(manifest_path.parent, info["path"])
+        if sha256_file(source) != info["sha256"]: raise ValueError("Train split hash mismatch")
+        def texts():
+            for row in read_jsonl(source):
+                if row.get("split") != "train": raise ValueError("Tokenizer received non-training data")
+                yield row["text"]
+        tok = BPETokenizer.train(texts(), args.vocab_size or config["vocab_size"], splitter, config["special_tokens"])
+        tok.metadata["corpus_manifest_sha256"] = sha256_file(manifest_path)
+    else:
+        with Path(args.text).open(encoding="utf-8", newline="") as stream:
+            tok = BPETokenizer.train(stream, args.vocab_size or config["vocab_size"], splitter, config["special_tokens"])
     tok.save(args.output)
     print(json.dumps(tok.metadata, ensure_ascii=False, indent=2))
     if tok.vocab_size != (args.vocab_size or config["vocab_size"]):

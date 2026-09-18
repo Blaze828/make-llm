@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import torch
 from torch import nn
+from torch.utils.checkpoint import checkpoint
 from .attention import Attention
 from .cache import KVCache
 from .config import ModelConfig
@@ -41,6 +42,10 @@ class KoreanLM(nn.Module):
         if config.tie_word_embeddings:
             self.lm_head.weight = self.embedding.weight
         self._cache_owner = object()
+        self.gradient_checkpointing = False
+
+    def set_gradient_checkpointing(self, enabled=True):
+        self.gradient_checkpointing = bool(enabled)
 
     @staticmethod
     def _init_weights(module):
@@ -108,7 +113,14 @@ class KoreanLM(nn.Module):
                    & (keys_docs[:, None, :] == docs[:, :, None]))
         x, caches = self.embedding(input_ids), []
         for i, layer in enumerate(self.layers):
-            x, cache = layer(x, pos, allowed, past.layers[i] if past else None, use_cache)
+            if self.gradient_checkpointing and self.training:
+                # Bind the current block: checkpoint recomputation happens after this loop.
+                def run(value, block=layer):
+                    return block(value, pos, allowed, None, False)[0]
+                x = checkpoint(run, x, use_reentrant=False)
+                cache = None
+            else:
+                x, cache = layer(x, pos, allowed, past.layers[i] if past else None, use_cache)
             if use_cache:
                 caches.append(cache)
         logits = self.lm_head(self.norm(x))

@@ -1,4 +1,6 @@
 import copy
+import pytest
+pytestmark = pytest.mark.training
 import torch
 from model import KoreanLM
 from training.checkpoint import save_checkpoint, load_checkpoint

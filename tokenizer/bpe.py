@@ -18,6 +18,8 @@ class BPETokenizer:
 
     @classmethod
     def train(cls, texts, vocab_size=32000, splitter=None, special_tokens=None):
+        from training.execution import require_training_enabled
+        require_training_enabled()
         special_tokens = SPECIAL_TOKENS if special_tokens is None else special_tokens
         if len(set(special_tokens)) != len(special_tokens) or vocab_size < 256+len(special_tokens):
             raise ValueError("Vocabulary must contain unique special tokens and all 256 bytes")
@@ -61,7 +63,10 @@ class BPETokenizer:
     def special_id(self, token):
         if token not in self.metadata.get("special_tokens", SPECIAL_TOKENS):
             raise ValueError("Not a registered control token")
-        return self.backend.token_to_id(token)
+        value = self.backend.token_to_id(token)
+        if value is None:
+            raise ValueError(f"Missing control token: {token}")
+        return value
 
     def encode(self, text):
         return self.backend.encode(text, add_special_tokens=False).ids
@@ -76,6 +81,7 @@ class BPETokenizer:
         metadata = dict(self.metadata)
         metadata["tokenizer_sha256"] = hashlib.sha256((path / "tokenizer.json").read_bytes()).hexdigest()
         (path / "metadata.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+        self.metadata = metadata
 
     @classmethod
     def load(cls, path):
@@ -84,4 +90,9 @@ class BPETokenizer:
         digest = hashlib.sha256((path / "tokenizer.json").read_bytes()).hexdigest()
         if digest != metadata["tokenizer_sha256"]:
             raise ValueError("Tokenizer artifact hash mismatch")
-        return cls(Tokenizer.from_file(str(path / "tokenizer.json")), metadata)
+        backend = Tokenizer.from_file(str(path / "tokenizer.json"))
+        if backend.get_vocab_size() != metadata["actual_vocab_size"]:
+            raise ValueError("Tokenizer metadata vocabulary mismatch")
+        for i, token in enumerate(metadata["special_tokens"]):
+            if backend.token_to_id(token) != i: raise ValueError("Special token IDs are inconsistent")
+        return cls(backend, metadata)

@@ -16,6 +16,8 @@ def main():
     parser.add_argument("--output", default="checkpoints/smoke")
     parser.add_argument("--bf16", action="store_true")
     args = parser.parse_args()
+    from training.execution import require_training_enabled
+    require_training_enabled()
     out = Path(args.output)
     if out.exists() and any(out.iterdir()):
         raise ValueError("Use an empty output directory to preserve earlier runs")

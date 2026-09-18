@@ -3,11 +3,14 @@ import math
 import torch
 from .dataloader import collate
 from .loss import causal_loss
+from .execution import require_training_enabled
 
 
 def train_update(model, optimizer, scheduler, microbatches, z_loss_weight=0.0, clip=1.0, bf16=False):
     """One device, exact valid-token weighted accumulation, one optimizer update."""
+    require_training_enabled()
     device = next(model.parameters()).device
+    current_lr = optimizer.param_groups[0]["lr"]
     if bf16 and (device.type != "cuda" or not torch.cuda.is_bf16_supported()):
         raise ValueError("BF16 execution requires a supported CUDA device")
     counts = []
@@ -27,6 +30,7 @@ def train_update(model, optimizer, scheduler, microbatches, z_loss_weight=0.0, c
     for batch, count in zip(microbatches, counts):
         if not count:
             continue
+        batch = {key:value.to(device) for key,value in batch.items()}
         context = torch.autocast("cuda", dtype=torch.bfloat16) if bf16 else nullcontext()
         with context:
             output = model(**{k: v for k, v in batch.items() if k != "loss_mask"})
@@ -41,7 +45,7 @@ def train_update(model, optimizer, scheduler, microbatches, z_loss_weight=0.0, c
     model.invalidate_cache()
     scheduler.step()
     return {"ce": ce_total/total, "z": z_total/total, "tokens": total,
-            "grad_norm": float(grad_norm), "lr": optimizer.param_groups[0]["lr"]}
+            "grad_norm": float(grad_norm), "lr": current_lr, "next_lr": optimizer.param_groups[0]["lr"]}
 
 
 @torch.no_grad()

@@ -1,0 +1,4 @@
+{"id":"format-text","type":"text","domain":"korean_general","text":"이 문장은 평가 파일 형식을 설명하기 위해 직접 작성한 예시입니다."}
+{"id":"format-choice","type":"multiple_choice","domain":"korean_general","prompt":"하나 더하기 하나는? 답:","choices":[" 둘"," 셋"],"answer_index":0}
+{"id":"format-qa","type":"qa","domain":"korean_general","prompt":"다음 글에서 색을 찾아 답하세요. 글: 하늘이 파랗다. 답:","answers":["파랗다","파란색"]}
+{"id":"format-generation","type":"generation","domain":"traffic","prompt":"보행자가 횡단보도 앞에서 기다리고 있다. 운전자는"}

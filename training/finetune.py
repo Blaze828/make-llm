@@ -10,6 +10,7 @@ from .checkpoint import load_checkpoint
 from .dataloader import collate
 from .engine import evaluate, train_update
 from .optimizer import build_optimizer, build_scheduler
+from .execution import require_training_enabled, require_single_process
 
 
 def sft_rows(records, tokenizer, context_length):
@@ -47,6 +48,8 @@ def main():
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--bf16", action="store_true")
     args = parser.parse_args()
+    require_training_enabled()
+    require_single_process()
     if args.steps <= 0:
         parser.error("steps must be positive")
     tok = BPETokenizer.load(args.tokenizer)

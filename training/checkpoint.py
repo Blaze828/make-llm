@@ -9,12 +9,12 @@ def fingerprint(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
-def save_checkpoint(path, model, optimizer, scheduler, step, cursor, run_metadata):
+def save_checkpoint(path, model, optimizer, scheduler, step, cursor, run_metadata, progress=None):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     state = {"format_version": 1, "config": model.config.to_dict(), "model": model.state_dict(),
              "optimizer": optimizer.state_dict(), "scheduler": scheduler.state_dict(),
-             "step": step, "cursor": cursor, "run_metadata": run_metadata,
+             "step": step, "cursor": cursor, "run_metadata": run_metadata, "progress": progress or {},
              "torch_rng": torch.get_rng_state(), "python_rng": random.getstate(),
              "cuda_rng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else []}
     temporary = path.with_suffix(path.suffix+".tmp")

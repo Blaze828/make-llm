@@ -1,0 +1,11 @@
+{
+  "allowed_licenses": [],
+  "min_chars": 40,
+  "max_chars": 200000,
+  "redact_email_phone": true,
+  "near_duplicate_grouping": true,
+  "near_duplicate_jaccard": 0.85,
+  "seed": 42,
+  "validation_ratio": 0.02,
+  "test_ratio": 0.02
+}

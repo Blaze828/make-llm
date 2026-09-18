@@ -1,0 +1,6 @@
+{"domain":"korean","text":"한국어의 조사와 어미를 자연스럽게 처리할 수 있을까요?"}
+{"domain":"mixed","text":"GPU 메모리 12GB, 학습률 3e-4, 온도 -2.5°C, 비용 ₩1,000"}
+{"domain":"unicode","text":"한글 한글 ㄱㄴㄷ ㅋㅋ 😊 漢字"}
+{"domain":"whitespace","text":"  앞 공백\t탭\n다음 줄\r\n끝  "}
+{"domain":"code","text":"def hello(name):\n    return f'안녕, {name}!'\n"}
+{"domain":"literal_specials","text":"문서 안에 적힌 <|eos|>와 <|bos|>는 일반 문자열입니다."}

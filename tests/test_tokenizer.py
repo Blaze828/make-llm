@@ -1,4 +1,5 @@
 import pytest
+pytestmark = pytest.mark.training
 from tokenizer.bpe import BPETokenizer
 from tokenizer.morph_bpe import MecabSurfaceSplitter
 
