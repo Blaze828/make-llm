@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "status": "pilot",
+  "model_config": "configs/architecture/debug-40m.json",
+  "tokenizer_config": "configs/tokenizer/korean-morph-bpe-32k.json",
+  "objective": "causal_next_token_prediction",
+  "optimizer": {
+    "name": "adamw",
+    "learning_rate": 0.0001,
+    "betas": [
+      0.9,
+      0.95
+    ],
+    "epsilon": 1e-08,
+    "weight_decay": 0.1,
+    "no_weight_decay": [
+      "embedding_and_tied_lm_head",
+      "normalization_scales"
+    ],
+    "deduplicate_shared_parameters": true
+  },
+  "scheduler": {
+    "type": "linear_warmup_then_cosine",
+    "warmup_ratio": 0.01,
+    "min_lr_ratio": 0.1,
+    "step_unit": "optimizer_update"
+  },
+  "gradient_clip_global_norm": 1,
+  "precision": {
+    "autocast": "bfloat16",
+    "loss": "float32",
+    "optimizer_state": "float32"
+  },
+  "z_loss": {
+    "coefficient": 0,
+    "ablation_coefficients": [
+      0,
+      1e-05,
+      0.0001
+    ],
+    "reduction": "mean_over_valid_shifted_targets",
+    "compute_dtype": "float32"
+  },
+  "batch": {
+    "micro_batch_size": 4,
+    "gradient_accumulation_steps": 8,
+    "world_size": 1,
+    "loss_normalization": "valid_target_tokens_across_accumulation_and_ranks"
+  },
+  "budget": {
+    "total_training_tokens": 10000000
+  },
+  "data": {
+    "manifest": "datasets/processed/tokens-v1",
+    "tokenizer_train_split_only": true,
+    "document_isolated_packing": true
+  },
+  "evaluation": {
+    "metrics": [
+      "cross_entropy",
+      "bits_per_byte",
+      "korean_task_scores",
+      "generation_repetition",
+      "eos_behavior",
+      "peak_memory",
+      "tokens_per_second"
+    ],
+    "compare_token_perplexity_only_with_identical_tokenizer": true
+  },
+  "checkpoint": {
+    "save_optimizer": true,
+    "save_scheduler": true,
+    "save_rng": true,
+    "save_data_cursor": true,
+    "save_tokenizer_hash": true
+  }
+}

@@ -5,7 +5,9 @@ Building an LLM
 
 **2026-09-18 데이터 확보 전 준비:** [준비한 코드와 다음 실행 순서](docs/data-readiness.md). 데이터 정제·중복 그룹 분할, 디스크 기반 토큰 로딩, 학습 로그·복구, activation checkpointing, 토크나이저 비교·한국어 평가 도구를 추가했다. 학습은 기본 차단 상태다.
 
-**데이터 출처:** [출처 후보·라이선스 결정과 확인 기록표](docs/data-sources.md). `configs/data/preparation.json`의 `allowed_licenses`가 비어 있어 데이터 파이프라인은 아직 실행할 수 없다. 이 문서의 항목을 확인해 채워야 시작된다.
+**2026-09-18 파일럿 사전학습:** [한국어 위키백과로 파이프라인 전 구간 완주](experiments/pilot-kowiki-2026-09-18/README.md). 덤프 변환 → 정제 → 토크나이저 4종 → 패킹 → preflight → 40M 모델 306 update 학습 3 run을 실제 데이터로 처음 실행했다. 최저 validation CE 4.0899, 실측 처리량 약 17,000 tokens/s. 평가 harness와 316M 실측은 아직 실행하지 않았다.
+
+**데이터 출처:** [출처 후보·라이선스 결정과 확인 기록표](docs/data-sources.md). `allowed_licenses`는 파일럿에서 `cc-by-sa-4.0`으로 설정했으나 확인 기록표는 미완성이다. 다른 출처를 쓰려면 이 문서의 항목을 확인해 채워야 한다.
 
 **실행 환경:** [환경별 결과 비교 규칙](docs/environments.md). **GPU가 서로 다른 여러 머신에서 작업하므로** 메모리·처리량 수치는 측정 환경을 함께 기록한다. Python은 3.13을 사용한다(3.14에서 `mecab-ko` 설치 실패).
 

@@ -1,0 +1,69 @@
+{
+  "source_sha256": "49780bbb7525881aa80d697c5e03fa9c0b8683a948d26cba8e2f1adc81cc5007",
+  "models": {
+    "morph16": {
+      "vocab_size": 16000,
+      "tokenizer_sha256": "01b27fa7050774daa954d7b62ea413ad8f528ac26692502356a5702c0b5ef6c3",
+      "domains": {
+        "korean_general": {
+          "documents": 112,
+          "tokens": 448769,
+          "utf8_bytes": 1389705,
+          "characters": 611767,
+          "roundtrip_failures": 0,
+          "seconds": 0.40042399990488775,
+          "tokens_per_byte": 0.3229239298987915,
+          "bytes_per_second": 3470583.682122188
+        }
+      }
+    },
+    "morph32": {
+      "vocab_size": 32000,
+      "tokenizer_sha256": "653c05682811894358187435fd8c15ada5d15cb6e507b8d7c33c0f59c382e438",
+      "domains": {
+        "korean_general": {
+          "documents": 112,
+          "tokens": 433430,
+          "utf8_bytes": 1389705,
+          "characters": 611767,
+          "roundtrip_failures": 0,
+          "seconds": 0.3651252000418026,
+          "tokens_per_byte": 0.3118863355892078,
+          "bytes_per_second": 3806105.4121733992
+        }
+      }
+    },
+    "morph48": {
+      "vocab_size": 48000,
+      "tokenizer_sha256": "24bbddf5eaad5b2e0011de948dc0cdfcf505e5b476df69e1f3418045e8f2ac54",
+      "domains": {
+        "korean_general": {
+          "documents": 112,
+          "tokens": 426392,
+          "utf8_bytes": 1389705,
+          "characters": 611767,
+          "roundtrip_failures": 0,
+          "seconds": 0.39156599997659214,
+          "tokens_per_byte": 0.30682195142134483,
+          "bytes_per_second": 3549095.1719073583
+        }
+      }
+    },
+    "plain32": {
+      "vocab_size": 32000,
+      "tokenizer_sha256": "134aa6c657dc66ed2fc6f74ecfa90dade266acffa3650ece541ec24400399edd",
+      "domains": {
+        "korean_general": {
+          "documents": 112,
+          "tokens": 278653,
+          "utf8_bytes": 1389705,
+          "characters": 611767,
+          "roundtrip_failures": 0,
+          "seconds": 0.3623341001220979,
+          "tokens_per_byte": 0.2005123389496332,
+          "bytes_per_second": 3835424.265979114
+        }
+      }
+    }
+  }
+}
