@@ -30,7 +30,7 @@ UTF-8 JSONL, 한 줄에 한 문서. 문서 내부 줄바꿈은 JSON의 `\n`으�
 
 `id/source/license/domain/text`는 필수다. `group_id`는 선택이며 같은 원문에서 파생한 여러 문서를 묶을 때 사용한다. 서로 다른 출처의 group ID가 충돌하지 않도록 출처 접두사를 붙인다. HTML 문서는 `content_type=html`을 쓴다. 코드 분야에는 HTML 제거를 적용하지 않는다.
 
-`configs/data/preparation.json`의 `allowed_licenses`는 의도적으로 비워 두었다. 실제 자료의 조건을 확인한 후 허용 식별자를 넣어야 실행된다. 이름을 허용 목록에 넣는 것 자체가 이용 권리를 증명하지는 않는다.
+출처 후보·라이선스 식별자 체계·확인 기록표는 [데이터 출처 문서](data-sources.md)에 정리했다. `configs/data/preparation.json`의 `allowed_licenses`는 의도적으로 비워 두었다. 실제 자료의 조건을 확인한 후 허용 식별자를 넣어야 실행된다. 이름을 허용 목록에 넣는 것 자체가 이용 권리를 증명하지는 않는다.
 
 ```powershell
 python -X utf8 -m data_pipeline.prepare --input datasets/raw.jsonl --output datasets/clean-v1

@@ -1,15 +1,24 @@
 # make-llm
 Building an LLM
 
-이전에 실행한 검증의 실제 파라미터·결과·한계는 [2026-09-17 검증 실행 기록](experiments/implementation-validation-2026-09-17/README.md)에 정리했다. 이후 학습 실행은 중단한 상태다.
+이전에 실행한 검증의 실제 파라미터·결과·한계는 [2026-09-17 검증 실행 기록](experiments/implementation-validation-2026-09-17/README.md)에 정리했다. 이후 학습 실행은 중단한 상태다. 의존성 설치와 회귀 테스트 실행 결과는 [2026-09-18 환경 구성·테스트 기록](experiments/test-verification-2026-09-18/README.md)에 있다.
 
-**2026-09-18 데이터 확보 전 준비:** [준비한 코드와 다음 실행 순서](docs/data-readiness.md). 데이터 정제·중복 그룹 분할, 디스크 기반 토큰 로딩, 학습 로그·복구, activation checkpointing, 토크나이저 비교·한국어 평가 도구를 추가했다. 이번 변경은 정적 검사만 수행했으며 학습·평가를 실행하지 않았다. 학습은 기본 차단 상태다.
+**2026-09-18 데이터 확보 전 준비:** [준비한 코드와 다음 실행 순서](docs/data-readiness.md). 데이터 정제·중복 그룹 분할, 디스크 기반 토큰 로딩, 학습 로그·복구, activation checkpointing, 토크나이저 비교·한국어 평가 도구를 추가했다. 학습은 기본 차단 상태다.
+
+**데이터 출처:** [출처 후보·라이선스 결정과 확인 기록표](docs/data-sources.md). `configs/data/preparation.json`의 `allowed_licenses`가 비어 있어 데이터 파이프라인은 아직 실행할 수 없다. 이 문서의 항목을 확인해 채워야 시작된다.
+
+**실행 환경:** [환경별 결과 비교 규칙](docs/environments.md). **GPU가 서로 다른 여러 머신에서 작업하므로** 메모리·처리량 수치는 측정 환경을 함께 기록한다. Python은 3.13을 사용한다(3.14에서 `mecab-ko` 설치 실패).
 
 **모델 구현:** [설치·학습·생성·검증 안내](docs/implementation.md). Dense GQA 모델, 한국어 형태소 BPE, AdamW 학습/재개, LoRA·DoRA SFT를 구현했다. 아래 초기 설계 단계 설명보다 이 안내를 우선한다.
 
 ```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 python -X utf8 -m scripts.static_check
+python -X utf8 -m pytest -q
 ```
+
+2026-09-18 환경 B(RTX 4070 SUPER, Python 3.13.15, PyTorch 2.14.0+cu126)에서 `static_check` 통과, `pytest` **15 passed / 9 skipped**, 학습 게이트를 열면 **24 passed**를 확인했다. 기준선과 환경별 차이는 [환경 문서](docs/environments.md)에 있다.
 
 한국어 특화의 현재 기준: [우리가 읽은 논문으로 구성한 설계](docs/korean-model-recipe.md). HyperCLOVA·Polyglot-Ko의 형태소 인지 Byte-level BPE와 OLMo 계열 학습 안정화를 연결했다.
 

@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
+.venv*/
 
 # 데이터 (원본·정제 결과는 용량이 크고 코드로 재생성 가능)
 datasets/raw/

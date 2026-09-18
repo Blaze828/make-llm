@@ -1,5 +1,11 @@
+# Python 3.13 전용. 3.14에서는 mecab-ko가 cp314 wheel이 없어 소스 빌드로 넘어가고
+# MSVC가 필요해 실패한다. 자세한 내용은 docs/environments.md 참조.
+#   py -3.13 -m venv .venv
+# CUDA 학습에는 GPU에 맞는 PyTorch 설치가 필요하다.
+#   pip install "torch>=2.6,<3" --index-url https://download.pytorch.org/whl/cu126
 torch>=2.6,<3
 tokenizers==0.23.2
 mecab-ko==1.0.2
+mecab-ko-dic==1.0.0
 pytest>=8,<10
 numpy>=1.26,<3

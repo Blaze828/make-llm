@@ -17,6 +17,8 @@
 | 분야 적응 | `adapters/lora.py`, `training/finetune.py` | LoRA/DoRA, 응답 위치만 SFT loss, adapter 호환성 검사 |
 | 생성 | `training/generate.py` | base 또는 adapter, 일반 prompt 또는 SFT 대화 포맷 |
 
+**Python 3.13을 사용한다.** `mecab-ko==1.0.2`는 cp313까지만 wheel을 제공하므로 3.14에서는 소스 빌드로 넘어가 실패한다. GPU가 다른 환경 사이에서 무엇을 비교할 수 있는지는 [환경 문서](environments.md)에 정리했다.
+
 MeCab은 `mecab-ko==1.0.2`와 `mecab-ko-dic` 한국어 사전을 사용한다. `python-mecab-ko` 배포판은 현재 Windows/Python 3.13에서 헤더 부족으로 빌드되지 않아, 같은 MeCab-ko 엔진의 Windows wheel 제공 배포판을 사용했다. 다른 형태소 분석기로 대체하지 않았다. 실제 버전·사전 hash는 tokenizer metadata에 기록한다.
 
 ## 설치와 전체 검증
@@ -80,10 +82,10 @@ python -X utf8 -m training.generate --checkpoint checkpoints/base.pt --tokenizer
 ## 2026-09-17 버전의 실제 검증 결과
 
 - `pytest`: 18개 테스트 통과. causality, packing/padding 격리, cache 일치, eager/SDPA 출력·gradient 비교, 세 모델의 파라미터 수, gradient accumulation, 저장/재개, 문자 복원, adapter 저장/복원, 응답 전용 SFT loss 포함.
-- RTX 3060 / PyTorch 2.11.0+cu126에서 BF16 cache 테스트 통과.
+- RTX 3060 / PyTorch 2.11.0+cu126에서 BF16 cache 테스트 통과. (환경 A 측정값 — [환경 문서](environments.md) 참조)
 - 형태소 BPE + 약 126K smoke 모델 40 update 학습·별도 문장 validation·checkpoint·생성 CLI 완료. 생성은 공백 반복 수준으로, 한국어 성능의 증거가 아니다.
 - 같은 smoke base의 DoRA SFT 3 update와 별도 prompt validation 완료.
-- 실제 **315,936,768 파라미터** 기본 모델: BF16, batch 1, 길이 32, AdamW 1 update 완료. 최대 CUDA allocated 메모리 약 **5.84 GiB**. 4K 문맥 VRAM 추정이나 장시간 안정성 측정으로 해석하지 않는다.
+- 실제 **315,936,768 파라미터** 기본 모델: BF16, batch 1, 길이 32, AdamW 1 update 완료. 최대 CUDA allocated 메모리 약 **5.84 GiB**(환경 A 기준이며 다른 GPU의 예측값이 아니다). 4K 문맥 VRAM 추정이나 장시간 안정성 측정으로 해석하지 않는다.
 
 ## 현재 한계
 
