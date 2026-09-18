@@ -1,5 +1,9 @@
 # 읽은 논문 정리
 
+최신 구조 선정에 사용한 논문·GitHub 코드 비교는 [2026-09 아키텍처 조사](architecture-research-2026-09.md)에, 실제 채택안은 [아키텍처 v1](../architecture.md)에 정리했다.
+
+우리가 읽은 논문을 한국어 tokenizer·모델·학습 최적화로 연결한 현재 기준은 [한국어 LLM 설계](../korean-model-recipe.md)다. HyperCLOVA·Polyglot-Ko의 원문과 공개 tokenizer를 재확인해 학습 단계와 추론 단계를 구분했다.
+
 `make-llm`을 설계할 때 참고한 핵심 LLM 논문과 관련 용어를 모은 노트다. 논문 원문을 다시 볼 때는 각 논문의 **핵심 질문**, **핵심 방법**, **한 문장 요약**부터 확인한다.
 
 ## 한눈에 보기
@@ -138,7 +142,9 @@
 | 구조 | GPT-3 계열의 autoregressive Decoder-only Transformer |
 | 학습 데이터 | 블로그, 뉴스, 카페, 댓글, Q&A 등 다양한 한국어 중심 데이터 |
 | Tokenizer | Morpheme-aware Byte-level BPE |
-| Tokenizer 핵심 발견 | 일반 Byte-level BPE 및 Character BPE보다 한국어 task에서 더 높은 성능을 보임 |
+| Tokenizer 핵심 발견 | Table 6의 여러 작업에서 향상했지만 한→영 번역은 일반 Byte-level BPE보다 낮음. 모든 작업의 우위는 아님 |
+| 학습 최적화 | AdamW + cosine schedule, 최소 LR은 시작 LR의 1/10 |
+| 적응 방법 | 입력 측 p-tuning 실험; optimizer 자체와는 별개 |
 | 성능 경향 | 모델 크기가 커질수록 few-shot 성능이 전반적으로 향상 |
 
 ### 프로젝트에서 참고할 점
@@ -152,7 +158,7 @@
   + 모델 크기
 ```
 
-이 프로젝트에서는 HyperCLOVA를 **한국어 데이터 구성과 tokenizer 설계의 참고 모델**로 사용한다. 특히 단순 BPE부터 구현한 다음, 한국어 형태소 특성을 반영한 Morpheme-aware Byte-level BPE를 비교 실험 후보로 둔다.
+이 프로젝트에서는 HyperCLOVA를 **한국어 데이터 구성과 tokenizer 설계의 주 근거**로 사용한다. 형태소 인지 Byte-level BPE 어휘 학습을 우선 설계로 채택하고 일반 Byte-level BPE를 대조군으로 둔다. 자체 분석기를 MeCab-ko로 대체하는 부분과 추론 계약은 [한국어 설계](../korean-model-recipe.md)에 명시했다.
 
 **한 문장 요약:** 한국어 중심의 다양한 데이터와 한국어에 맞춘 tokenizer가 대규모 한국어 LLM의 핵심 요소임을 보여준다.
 
@@ -169,6 +175,8 @@
 | 데이터 종류 | 블로그, 뉴스, Q&A, 특허, 소설, 댓글 등 |
 | 전처리 | 중복 제거, 개인정보 제거, HTML 정리 |
 | Tokenizer | MeCab + Morpheme-aware Byte-level BPE |
+| 어휘와 embedding | 논문 어휘 30,003개 / 공개 1.3B config의 embedding 30,080행 |
+| 추론 구현 확인 | 공개 tokenizer.json에는 MeCab 실행기가 없음; 형태소 인지 어휘 학습과 추론 분석기 실행을 구별 |
 | 위치 정보 | RoPE (Rotary Positional Embedding) |
 | 평가 | KOBEST로 zero-shot / few-shot 평가 |
 
@@ -282,7 +290,7 @@ DoRA
   └─ LoRA의 magnitude / direction 분리 방식으로 fine-tuning
 ```
 
-프로젝트는 HyperCLOVA와 Polyglot-Ko를 참고해 한국어 Base LLM을 만들고, DoRA로 전체 모델을 다시 학습하지 않고 새 분야에 적응하는 것을 목표로 한다.
+프로젝트는 HyperCLOVA와 Polyglot-Ko를 참고해 한국어 Base LLM을 만들고, LoRA 기준선과 DoRA를 비교해 새 분야에 적응한다. DoRA를 최종 승자로 미리 확정하지 않는다. DAPT는 선택 단계다.
 
 ```text
 한국어 데이터 수집 및 정제
@@ -295,7 +303,7 @@ Next Token Prediction 기반 Pre-training
           ↓
 한국어 Base LLM
           ↓
-DoRA 기반 Fine-Tuning
+LoRA 기준선 / DoRA 비교 Fine-Tuning
           ↓
 특정 Domain에 특화된 LLM
 ```

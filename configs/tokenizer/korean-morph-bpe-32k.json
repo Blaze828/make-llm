@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "status": "design_only",
+  "family": "morpheme_aware_byte_level_bpe",
+  "vocab_size": 32000,
+  "reference_models": [
+    "HyperCLOVA",
+    "Polyglot-Ko"
+  ],
+  "normalizer": "identity",
+  "initial_alphabet": "all_256_bytes",
+  "byte_level": {
+    "add_prefix_space": false,
+    "use_regex": true
+  },
+  "morphology": {
+    "scope": "tokenizer_vocabulary_training_only",
+    "analyzer": "mecab-ko",
+    "analyzer_version": null,
+    "dictionary_revision": null,
+    "dictionary_sha256": null,
+    "boundaries": "original_surface_spans",
+    "unrecoverable_span": "use_original_text_without_morph_boundaries",
+    "preserve_whitespace": true
+  },
+  "encoding": {
+    "pretraining": "byte_level_only",
+    "finetuning": "byte_level_only",
+    "inference": "byte_level_only",
+    "allow_special_in_ordinary_text": false
+  },
+  "special_tokens": [
+    "<|pad|>",
+    "<|bos|>",
+    "<|eos|>",
+    "<|unk|>",
+    "<|system|>",
+    "<|user|>",
+    "<|assistant|>",
+    "<|end_turn|>"
+  ],
+  "special_token_id_policy": "list_order_starting_at_zero_reserved_before_training",
+  "training_corpus_manifest": null,
+  "artifact_revision": null,
+  "comparison_vocab_sizes": [
+    32000,
+    48000
+  ],
+  "must_pass": [
+    "ordinary_text_utf8_round_trip",
+    "special_token_isolation",
+    "no_whitespace_loss",
+    "vocab_size_matches_embedding",
+    "held_out_korean_english_code_evaluation"
+  ]
+}

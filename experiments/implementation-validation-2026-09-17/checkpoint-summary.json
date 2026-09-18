@@ -1,0 +1,90 @@
+{
+  "format_version": 1,
+  "config": {
+    "vocab_size": 433,
+    "num_hidden_layers": 2,
+    "hidden_size": 64,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "head_dim": 16,
+    "intermediate_size": 192,
+    "max_position_embeddings": 256,
+    "rms_norm_eps": 1e-06,
+    "qk_norm": "headwise_rmsnorm",
+    "rope_theta": 10000.0,
+    "tie_word_embeddings": true,
+    "attention_dropout": 0.0,
+    "hidden_dropout": 0.0,
+    "backend": "sdpa"
+  },
+  "step": 40,
+  "cursor": 40,
+  "run_metadata": {
+    "tokenizer": "804fe11bf4c3d8f3c3e0367cf6f926767cc0544bbb378124cd07656bc9638f18",
+    "train": "c8a94080baa0db27ebb7337e7c4ad0b9d51aa74348ef18d35b9c72da719b25b7",
+    "validation": "7eb463d9ea6df3c68e5140e87f6b968588920adc8115bd4ba141a8c05228bb34",
+    "recipe": "98b61358f4dbb8a18acae7464f23236617bb0dd4205ece9d7a53dd7936dac83d",
+    "steps": 40,
+    "batch_size": 1,
+    "accumulation": 1,
+    "sequence_length": 128,
+    "seed": 42,
+    "bf16": true,
+    "device": "cuda"
+  },
+  "scheduler": {
+    "base_lrs": [
+      0.0003,
+      0.0003
+    ],
+    "last_epoch": 40,
+    "_step_count": 41,
+    "_is_initial": false,
+    "_get_lr_called_within_step": false,
+    "_last_lr": [
+      2.9999999999999997e-05,
+      2.9999999999999997e-05
+    ],
+    "lr_lambdas": [
+      null,
+      null
+    ]
+  },
+  "optimizer_groups": [
+    {
+      "weight_decay": 0.1,
+      "lr": 2.9999999999999997e-05,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "eps": 1e-08,
+      "amsgrad": false,
+      "maximize": false,
+      "foreach": null,
+      "capturable": false,
+      "differentiable": false,
+      "fused": null,
+      "decoupled_weight_decay": true,
+      "initial_lr": 0.0003
+    },
+    {
+      "weight_decay": 0.0,
+      "lr": 2.9999999999999997e-05,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "eps": 1e-08,
+      "amsgrad": false,
+      "maximize": false,
+      "foreach": null,
+      "capturable": false,
+      "differentiable": false,
+      "fused": null,
+      "decoupled_weight_decay": true,
+      "initial_lr": 0.0003
+    }
+  ],
+  "provenance": "Read from existing checkpoint on 2026-09-18; no training or evaluation executed."
+}

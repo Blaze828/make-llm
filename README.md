@@ -1,6 +1,21 @@
 # make-llm
 Building an LLM
 
+이전에 실행한 검증의 실제 파라미터·결과·한계는 [2026-09-17 검증 실행 기록](experiments/implementation-validation-2026-09-17/README.md)에 정리했다. 이후 학습 실행은 중단한 상태다.
+
+**실행 가능한 구현 추가:** [설치·학습·생성·검증 안내](docs/implementation.md). Dense GQA 모델, 한국어 형태소 BPE, AdamW 학습/재개, LoRA·DoRA SFT를 구현했다. 아래 초기 설계 단계 설명보다 실행 상태는 이 안내를 우선한다.
+
+```powershell
+python -m pip install -r requirements.txt
+python -X utf8 -m pytest -q
+python -X utf8 -m scripts.smoke --device cuda --bf16 --steps 40 --output checkpoints/my-smoke
+```
+
+한국어 특화의 현재 기준: [우리가 읽은 논문으로 구성한 설계](docs/korean-model-recipe.md). HyperCLOVA·Polyglot-Ko의 형태소 인지 Byte-level BPE와 OLMo 계열 학습 안정화를 연결했다.
+
+현재 구조 기준: [한국어 LLM 아키텍처 v1](docs/architecture.md) · [최신 논문·GitHub 조사](docs/papers/architecture-research-2026-09.md) · [구조 설정](configs/README.md).
+2026-09-17 기준 설계는 Dense GQA Transformer이며, 40M 검증용 → 316M 기준안 → 1.2B 확장안으로 구분한다. 아래 초기 구상보다 최신 아키텍처 문서와 설정을 우선한다. 모델 코드를 구현하고 작은 학습을 검증했으며, 한국어 본 학습은 아직 수행하지 않았다.
+
 ## 1. 최종 목표
 
 한국어를 잘하는 기본 LLM을 만든 후, 새로운 분야의 데이터를 추가로 학습해서 빠르게 특화 모델을 만들 수 있는 구조

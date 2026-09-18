@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "method": "dora",
+  "rank": 8,
+  "alpha": 16,
+  "tokenizer_hash": "804fe11bf4c3d8f3c3e0367cf6f926767cc0544bbb378124cd07656bc9638f18",
+  "base_sha256": "06fd28a6936c9b9829c16e3c09e852e305ec8d1d478dea2af1cf5882d93d15ad",
+  "config": {
+    "vocab_size": 433,
+    "num_hidden_layers": 2,
+    "hidden_size": 64,
+    "num_attention_heads": 4,
+    "num_key_value_heads": 2,
+    "head_dim": 16,
+    "intermediate_size": 192,
+    "max_position_embeddings": 256,
+    "rms_norm_eps": 1e-06,
+    "qk_norm": "headwise_rmsnorm",
+    "rope_theta": 10000.0,
+    "tie_word_embeddings": true,
+    "attention_dropout": 0.0,
+    "hidden_dropout": 0.0,
+    "backend": "sdpa"
+  },
+  "targets": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "dtype": "torch.float32",
+  "weights_sha256": "24d8d77aba8402cce5f1fe2d68932668566531b3ab3ea9d666bd758962b852bd"
+}

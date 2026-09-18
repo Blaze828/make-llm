@@ -1,0 +1,28 @@
+{
+  "format_version": 1,
+  "family": "morph_byte_bpe",
+  "requested_vocab_size": 512,
+  "actual_vocab_size": 433,
+  "corpus_sha256": "4d2dbc99bcbe2e5761c6e2dbcf4c50f71527a758e5081d88a4e74ffe37026714",
+  "document_count": 6,
+  "tokenizers_version": "0.23.2",
+  "special_tokens": [
+    "<|pad|>",
+    "<|bos|>",
+    "<|eos|>",
+    "<|unk|>",
+    "<|system|>",
+    "<|user|>",
+    "<|assistant|>",
+    "<|end_turn|>"
+  ],
+  "morphology_scope": "vocabulary_training_only",
+  "morphology": {
+    "package": "mecab-ko",
+    "version": "1.0.2",
+    "dictionary_version": "1.0.0",
+    "dictionary_sha256": "a55bb95e5cfdacb30c8790aeb8d96c37a2e35f051c68213bcaf14da16d747395",
+    "fallback_documents": 0
+  },
+  "tokenizer_sha256": "804fe11bf4c3d8f3c3e0367cf6f926767cc0544bbb378124cd07656bc9638f18"
+}
