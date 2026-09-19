@@ -1,0 +1,11 @@
+{
+  "source": "Modal billing report --for today --resolution h --tz local --show-resources --json",
+  "metered_cost_by_app": {
+    "sanity_train_25_steps": 0.04682491,
+    "resume_train_25_to_306": 0.44700640,
+    "eval": 0.02283459,
+    "generation": 0.00246521
+  },
+  "selected_apps_total": 0.51913111,
+  "caveat": "CPU preprocessing stages, Volume charges, and later invoice settlement are excluded."
+}

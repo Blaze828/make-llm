@@ -27,6 +27,8 @@ python -X utf8 -m pytest -q
 현재 구조 기준: [한국어 LLM 아키텍처 v1](docs/architecture.md) · [최신 논문·GitHub 조사](docs/papers/architecture-research-2026-09.md) · [구조 설정](configs/README.md).
 2026-09-17 기준 설계는 Dense GQA Transformer이며, 40M 검증용 → 316M 기준안 → 1.2B 확장안으로 구분한다. 아래 초기 구상보다 최신 아키텍처 문서와 설정을 우선한다. 모델 코드를 구현하고 작은 학습을 검증했으며, 한국어 본 학습은 아직 수행하지 않았다.
 
+Modal에서 새로 재현할 40M 파일럿의 단계별 실행법은 [Modal 파일럿 안내](docs/modal-pilot.md)에 정리했다. 계정·예산·인증을 먼저 확인하고, 각 단계를 별도로 실행한다.
+
 ## 1. 최종 목표
 
 한국어를 잘하는 기본 LLM을 만든 후, 새로운 분야의 데이터를 추가로 학습해서 빠르게 특화 모델을 만들 수 있는 구조

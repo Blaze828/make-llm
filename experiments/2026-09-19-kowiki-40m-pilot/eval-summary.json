@@ -1,0 +1,30 @@
+{
+  "records": 116,
+  "validation_documents": 112,
+  "test_split_used": false,
+  "text": {
+    "domain": "korean_general",
+    "tokens": 433430,
+    "utf8_bytes": 1389705,
+    "ce": 4.089040368683042,
+    "perplexity": 59.68259093139956,
+    "bits_per_byte": 1.8398918042697057
+  },
+  "generation": {
+    "count": 4,
+    "mean_repetition": 0.5692234925049725,
+    "eos_rate": 0.0,
+    "predictions": [
+      "대한민국의 배우 배우 김.\n\n대한민국의 배우 선수 김 (~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ",
+      "경우 있는 것이다. 이 것은 이 것은 \"은 것이다. 이 것은 \"은 것이다. 이 것은 \"는 것이다. 이 것은 \"는 것이다. 이",
+      "3년 3월 1일 : 3월 1일 : 제2년 ~ 3월 1일)은 대한민국의 배우 김 (~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ",
+      "수 있는 것이다.\n\n이는 이 수 있는 것은 이는 것이다. 이는 이 수 있는 것이다. 이는 이 수 있는 것이다. 이는 이 "
+    ]
+  },
+  "provenance": {
+    "checkpoint_sha256": "04e1a189b26f0b820f30cad1c1c2d196286b2d63fa06fa9f7a91cac4be490da9",
+    "suite_sha256": "392c06cfe8879dcc2ed738d4352b7ce829a3c6ec2578f5df001bcc45a17138c9",
+    "tokenizer_sha256": "653c05682811894358187435fd8c15ada5d15cb6e507b8d7c33c0f59c382e438",
+    "max_new_tokens": 64
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "recorded_at_utc": "2026-09-19T05:19:59.251785+00:00",
+  "python": "3.13.3",
+  "platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+  "requested_gpu": "L4",
+  "gpu_name": "NVIDIA L4",
+  "gpu_memory_bytes": 23659151360,
+  "cuda_available": true,
+  "torch_cuda_version": "12.8",
+  "package_versions": {
+    "torch": "2.8.0",
+    "tokenizers": "0.23.2",
+    "mecab-ko": "1.0.2",
+    "mecab-ko-dic": "1.0.0",
+    "numpy": "2.3.2",
+    "modal": null
+  }
+}

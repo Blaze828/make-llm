@@ -1,0 +1,6 @@
+{
+  "prompt": "대한민국의 수도는",
+  "max_new_tokens": 64,
+  "checkpoint": "/mnt/artifacts/kowiki-20260901-40m-pilot/train/model.best.pt",
+  "generated_text": " 대한민국의 배우 배우 김.\n\n대한민국의 배우 선수 김 (~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ \n"
+}

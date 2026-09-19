@@ -1,0 +1,8 @@
+{
+  "status": "completed",
+  "step": 306,
+  "progress": {
+    "valid_tokens_seen": 9144892,
+    "best_validation_ce": 4.089396674839877
+  }
+}
